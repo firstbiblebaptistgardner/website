@@ -1,0 +1,12 @@
+span.bibleRef {
+  text-decoration:underline;
+  text-decoration-style: dotted;
+}
+ul.navBar>li {
+  display: inline-block
+}
+img.church {
+  height: auto;
+  width: 100%;
+  object-fit: contain;
+}
