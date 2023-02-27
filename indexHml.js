@@ -25,7 +25,8 @@ const index = hml.html([
   hml.body([
     hml.img({class: 'church', src: '/church.jpg'}),
     hml.h1(["First Bible Baptist Church Gardner"]),
-    hml.h2(["7 Church St, Gardner, MA 01440 * Sun 10:45 * Wed 6:30"]),
+    hml.h2(["7 Church St, Gardner, MA 01440 * Sun 10:45"]),
+    hml.h3(["Bible study Sun 9:45 & Wed 6:30"]),
     hml.div({class: 'verse'}, [bible.randomVerse]),
     navBar,
     hml.div([

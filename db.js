@@ -117,12 +117,6 @@ const getBan = async (user) => {
 
 const fillDb = async () => {
   logger.info('filling db');
-  //await db.exec('INSERT INTO boards VALUES ("xp", "Christposting", 0, 20, 200, 180, "unchecked");');
-  //logger.info(await db.get('SELECT * FROM boards WHERE board="xp";'));
-  //await addPost('xp', null, 'system', [], "hi", null);
-  //await addPost('xp', 1, 'system', ['sage'], 'bad post', null);
-  //await reportPost('xp', 2, 'obscenity','system');
-  //logger.info(await db.get('SELECT * FROM posts;'));
   if(conf.defaultModName && conf.defaultModKey){
     logger.info(await db.exec('INSERT INTO mods VALUES ("modkey1234","mod", NULL)'));
   }
