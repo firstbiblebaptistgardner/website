@@ -113,7 +113,7 @@ const hml = {
     return out;
   }
 };
-['html','head','body','a','b','div','i','p','h1','h2','span',
+['html','head','body','a','b','div','i','p','h1','h2','h3','span',
  'title','link','select','option','button','form','input','textarea',
  'iframe','ol','ul','li','img'].forEach(key => hml[key] = (params, childs) => element(key, params, childs));
 module.exports = hml;
