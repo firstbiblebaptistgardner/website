@@ -1,3 +1,4 @@
+const fs = require('fs');
 const bible = require('./bible.js');
 const hml = require('./hml.js');
 const modOps = require('./modOps.js');
