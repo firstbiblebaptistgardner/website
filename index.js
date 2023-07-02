@@ -90,6 +90,7 @@ attach('/500', 'get', 'json', async (req, res) => {
 attach('/404', 'get', 'send', page404);
 const statics = {
   '/style.css': '/style.css',
+  '/client.js': '/client.js',
   '/church.jpg': '/church.jpg',
   '/bible': '/bible'
 };
@@ -107,6 +108,7 @@ app.get('/images/:file', (req, res) => {
 attach('/', 'get', 'send', hml.route(pages.index));
 attach('/calendar', 'get', 'send', hml.route(pages.calendar));
 attach('/prayerRequest', 'get', 'send', hml.route(pages.prayerRequest));
+attach('/beliefs', 'get', 'send', hml.route(pages.beliefs));
 attach('/api/prayerRequest', 'post', 'redirect', post.prayerRequestApi);
 attach('/prayerRequestComplete', 'get', 'send', hml.route(pages.prayerRequestComplete));
 attach('/mod/login', 'get', 'send', hml.route(pages.modLogin));

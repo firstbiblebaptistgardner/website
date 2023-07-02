@@ -3,11 +3,103 @@ const verses = fs.readFileSync('bible','utf8').split('\n');
 const labeledVerses = verses.map(verse=>verse.slice(1).split('] ')).filter(x=>x.length==2);
 //labeledVerses.forEach((x,i)=>x.length==2||console.log(labeledVerses.slice(i-2,i+3)));
 // labeledVerses.forEach(([label,verse])=>console.log(`[${label}] ${verse}`));
+
+const bookNameVariants = {
+  'Gen': ['Genesis'],
+  'Ex': ['Exodus'],
+  'Lev': ['Leviticus'],
+  'Num': ['Numbers'],
+  'Deut': ['Deuteronomy'],
+  'Josh': ['Joshua'],
+  'Judg': ['Judges'],
+  'Ruth': [],
+  '1Sam': ['I Samuel'],
+  '2Sam': ['II Samuel'],
+  '1Ki': ['I Kings'],
+  '2Ki': ['II Kings'],
+  '1Ch': ['I Chronicles'],
+  '2Ch': ['II Chronicles'],
+  'Ezra': [],
+  'Neh': ['Nehemiah'],
+  'Esth': ['Esther'],
+  'Job': [],
+  'Ps': ['Psalms', 'Psalm'],
+  'Prov': ['Proverbs'],
+  'Eccl': ['Ecclesiastes'],
+  'Song': ['Song', 'Song of Solomon'],
+  'Is': ['Isaiah'],
+  'Jer': ['Jeremiah'],
+  'Lam': ['Lamentation'],
+  'Ez': ['Ezekiel'],
+  'Dan': ['Daniel'],
+  'Hos': ['Hosea'],
+  'Joel': [],
+  'Amos': [],
+  'Obd': ['Obadiah'],
+  'Jon': ['Jonah'],
+  'Mic': ['Micah'],
+  'Nah': ['Nahum'],
+  'Hab': ['Habakkuk'],
+  'Zep': ['Zephaniah'],
+  'Hag': ['Haggai'],
+  'Zech': ['Zechariah'],
+  'Mal': ['Malachi'],
+  'Mt': ['Matthew', 'Matt'],
+  'Mk': ['Mark'],
+  'Lk': ['Luke'],
+  'Jn': ['John'],
+  'Acts': ['Acts', 'Acts of the Apostles'],
+  'Rom': ['Romans'],
+  '1Cor': ['I Corinthians', 'ICor'],
+  '2Cor': ['II Corinthians', 'IICor'],
+  'Gal': ['Galatians'],
+  'Eph': ['Ephesians'],
+  'Phili': ['Philippians'],
+  'Col': ['Colossians'],
+  '1Th': ['I Thessalonians', '1Thess', 'IThess'],
+  '2Th': ['II Thessalonians', '2Thess', 'IIThess'],
+  '1Ti': ['I Timothy', '1Tim'],
+  '2Ti': ['II Timothy', '2Tim'],
+  'Tit': ['Titus'],
+  'Phile': ['Philemon'],
+  'Heb': ['Hebrews'],
+  'Jam': ['James'],
+  '1Pe': ['I Peter', '1Pet'],
+  '2Pe': ['II Peter', '2Pet'],
+  '1Jn': ['I John', '1John'],
+  '2Jn': ['II John', '2John'],
+  '3Jn': ['III John', '3John'],
+  'Jude': [],
+  'Rev': ['Revelation', 'Revelation of John']
+};
+
+const bookRef2short = {};
+const shortRef2long = {};
+Object.keys(bookNameVariants).forEach(sref => {
+  bookRef2short[sref] = sref;
+  bookNameVariants[sref].forEach(ref=>bookRef2short[ref]=sref);
+  shortRef2long[sref] = bookNameVariants[sref][0] ?? sref;
+});
+const bookRef2shortFn = (ref) => {
+  if(typeof ref != 'string'){
+    throw new Error(`non string ${ref} in bookRef2shortFn`);
+  }
+  if(bookRef2short[ref]){
+    return bookRef2short[ref];
+  }
+  const noDotSpace = ref.replace(/[. ]/g,'');
+  if(bookRef2short[noDotSpace]){
+    return bookRef2short[noDotSpace];
+  }
+  throw new Error(`cant find Bible book for ${ref}/${noDotSpace}`);
+}
+
 const verseObj = {};
 labeledVerses.forEach(([label, verseText])=>{
   const labelParts = label.split(' ');
   const chapterVerse = labelParts.pop();
-  const book = labelParts.join(' ');
+  const longBook = labelParts.join(' ');
+  const book = bookRef2short[longBook];
   const [chapter, verseId] = chapterVerse.split(':');
   if(!verseObj[book]){
     verseObj[book] = {};
@@ -17,49 +109,8 @@ labeledVerses.forEach(([label, verseText])=>{
   }
   verseObj[book][chapter][verseId] = verseText;
 });
-const long = [
-  'Genesis',         'Exodus',           'Leviticus',
-  'Numbers',         'Deuteronomy',      'Joshua',
-  'Judges',          'Ruth',             'I Samuel',
-  'II Samuel',       'I Kings',          'II Kings',
-  'I Chronicles',    'II Chronicles',    'Ezra',
-  'Nehemiah',        'Esther',           'Job',
-  'Psalms',          'Proverbs',         'Ecclesiastes',
-  'Song of Solomon', 'Isaiah',           'Jeremiah',
-  'Lamentations',    'Ezekiel',          'Daniel',
-  'Hosea',           'Joel',             'Amos',
-  'Obadiah',         'Jonah',            'Micah',
-  'Nahum',           'Habakkuk',         'Zephaniah',
-  'Haggai',          'Zechariah',        'Malachi',
-  'Matthew',         'Mark',             'Luke',
-  'John',            'Acts',             'Romans',
-  'I Corinthians',   'II Corinthians',   'Galatians',
-  'Ephesians',       'Philippians',      'Colossians',
-  'I Thessalonians', 'II Thessalonians', 'I Timothy',
-  'II Timothy',      'Titus',            'Philemon',
-  'Hebrews',         'James',            'I Peter',
-  'II Peter',        'I John',           'II John',
-  'III John',        'Jude',             'Revelation of John'
-];
-const short = [
-  'Gen', 'Ex', 'Lev', 'Num', 'Deut', 'Josh', 'Judg', 'Ruth',
-  '1Sam', '2Sam', '1Ki', '2Ki', '1Ch', '2Ch', 'Ezra', 'Neh', 'Esth',
-  'Job', 'Ps', 'Prov', 'Eccl', 'Song', 'Is', 'Jer', 'Lam', 'Ez',
-  'Dan', 'Hos', 'Joel', 'Amos', 'Obd', 'Jon', 'Mic', 'Nah', 'Hab', 'Zep',
-  'Hag', 'Zech', 'Mal', 'Mt', 'Mk', 'Lk', 'Jn', 'Acts', 'Rom',
-  '1Cor', '2Cor', 'Gal', 'Eph', 'Phili', 'Col', '1Th', '2Th',
-  '1Ti', '2Ti', 'Tit', 'Phile', 'Heb', 'Jam', '1Pe', '2Pe',
-  '1Jn', '2Jn', '3Jn', 'Jude', 'Rev'
-];
-const long2short = {};
-const short2long = {};
-const book2long = {};
-for(let i=0; i<long.length; i++){
-  long2short[long[i]] = short[i];
-  short2long[short[i]] = long[i];
-  book2long[long[i]] = long[i];
-  book2long[short[i]] = long[i];
-}
+
+
 const paraStarts = labeledVerses.filter(
   ([label, verseText])=>verseText[0]=='¶'
 ).map(
@@ -121,5 +172,5 @@ const getBibleSection = (book, chapter, startVerse, endVerse) => {
 
 module.exports = {labeledVerses, verseObj,
   randomVerse, getBibleVerse, getBibleSection,
-  long, short, long2short, short2long, book2long,
-  paraGen, paraBooks, paraStarts};
+  bookRef2short, shortRef2long,
+  paraGen, paraBooks, paraStarts, bookRef2shortFn};

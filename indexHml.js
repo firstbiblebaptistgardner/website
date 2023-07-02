@@ -6,6 +6,7 @@ const navItems = {
   'Home': '/',
   'Calendar': '/calendar',
   'Prayer Request': '/prayerRequest',
+  'Beliefs': '/beliefs',
   //'Missions': '/missions',
 };
 
@@ -17,12 +18,24 @@ const headTag = hml.head([
   hml.title([
     'First Bible Baptist Gardner'
   ]),
-  hml.link({rel: 'stylesheet', href: '/style.css'})
+  hml.link({rel: 'stylesheet', href: '/style.css'}),
+  hml.script({src: '/client.js'}),
 ]);
+
+const bannerData = require('./bannerData.json');
+const banners = bannerData.filter(
+  bd => new Date(bd.showTo) > new Date()
+).filter(
+  bd => !bd.showFrom || new Date(bd.showFrom) < new Date()
+).map(bd=>hml.div(
+  {class: 'banner', style:`background-color:${bd.backgroundColor};padding:2em`},
+  [bd.text]
+));
 
 const index = hml.html([
   headTag,
   hml.body([
+    ...banners,
     hml.img({class: 'church', src: '/church.jpg'}),
     hml.h1(["First Bible Baptist Church Gardner"]),
     hml.h2(["7 Church St, Gardner, MA 01440 * Sun 10:45"]),
@@ -35,7 +48,7 @@ const index = hml.html([
         [
           'No one is righteous [Rom 3:10]',
           'For all have sinned and come short of God\'s glory [Rom 3:23]',
-          'Because of Adam, no one can stop sinning for all are natural born sinners [Rom 5:23]',
+          'Because of Adam, no one can stop sinning for all are natural born sinners [Rom 5:12-14]',
           'God must punish sinners.  Since they cannot enter into heaven they will be cast into Hell [Rom 6:23][Rev 20:11-15]',
           'But though you are a sinner God still loves you and wants you in heaven [Rom 6:23][Rom 5:8][2Pe 3:9]',
           'So God sent Jeuss to pay the penalty for your sins.  On the cross He took your sins upon Himself, died for them, was buried, and rose again from the dead [1Cor 15:3-4][1Pe 2:24]',
@@ -50,6 +63,7 @@ const index = hml.html([
 const calendar = hml.html([
   headTag,
   hml.body([
+    ...banners,
     hml.iframe({
       src: "https://calendar.google.com/calendar/embed?src=firstbiblebaptistgardner%40gmail.com&ctz=America%2FNew_York",
       style: "border: 0",
@@ -65,6 +79,8 @@ const calendar = hml.html([
 const prayerRequest = hml.html([
   headTag,
   hml.body([
+    ...banners,
+    navBar,
     hml.form({
       action: '/api/prayerRequest',
       method: 'post',
@@ -99,6 +115,8 @@ const prayerRequest = hml.html([
 const prayerRequestComplete = hml.html([
   headTag,
   hml.body([
+    ...banners,
+    navBar,
     hml.p(['prayer request added']),
     hml.p([bible.randomVerse]),
     hml.p([bible.randomVerse]),
@@ -109,15 +127,17 @@ const prayerRequestComplete = hml.html([
 
 const modLogin = hml.html([
   headTag,
-  bible.randomVerse,
-  hml.form({
-    action: '/api/modLogin',
-    method: 'post',
-    enctype: 'multipart/form-data'
-  },[
-    hml.input({type: 'text', value: 'mod key here', name: 'modKey'}),
-    hml.input({type: 'text', value: 'mod name', name: 'modName'}),
-    hml.input({type: 'submit', value: 'submit'})
+  hml.body([
+    bible.randomVerse,
+    hml.form({
+      action: '/api/modLogin',
+      method: 'post',
+      enctype: 'multipart/form-data'
+    },[
+      hml.input({type: 'text', value: 'mod key here', name: 'modKey'}),
+      hml.input({type: 'text', value: 'mod name', name: 'modName'}),
+      hml.input({type: 'submit', value: 'submit'})
+    ])
   ])
 ]);
 
@@ -127,9 +147,35 @@ const modPrayerRequests = hml.html([
   modOps.prayerRequests
 ]);
 
+const bigLetters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','BB'];
+const smallLetters = ['a','b','c','d','e','f','g','h','i'];
+const beliefList = require('./beliefs.json');
+const beliefs = hml.html([
+  headTag,
+  hml.body([
+    ...banners,
+    navBar,
+    hml.a({id: 'top'},[hml.h1(['The following comprise the Scriptural beliefs of First Bible Baptist Church and its members.'])]),
+    hml.ul(beliefList.map((nb,num)=>hml.a({href:'#b'+bigLetters[num]},[bigLetters[num],nb[0]]))),
+    ...beliefList.map((nb,num)=>hml.div([
+      hml.a({id:'b'+bigLetters[num]},[
+        hml.h2([
+          bigLetters[num] + '. ' + nb[0],
+          hml.a({href: '#top'},['⬆️'])
+        ])
+      ]),
+      ...(typeof nb[1] == 'string' ? 
+        [hml.p(hml.tooltipsOnVerseRefsArray(nb[1]))] :
+        nb[1].map((para, pnum) => hml.p([smallLetters[pnum]+'.', ...hml.tooltipsOnVerseRefsArray(para)])))
+    ])),
+    bible.randomVerse
+  ])
+]);
+
 module.exports = {
   index,
   calendar,
+  beliefs,
   prayerRequest,
   prayerRequestComplete,
   modLogin,

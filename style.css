@@ -2,6 +2,10 @@ span.bibleRef {
   text-decoration:underline;
   text-decoration-style: dotted;
 }
+span.verseRefContainer {
+  display: inline-block;
+  border-style: outset;
+}
 ul.navBar>li {
   display: inline-block
 }
