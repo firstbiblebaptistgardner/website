@@ -115,10 +115,9 @@ const prayerRequest = hml.html([
 ]);
 
 const prayerRequestComplete = hml.html([
-  ...banners(),
   headTag,
   hml.body([
-    ...banners,
+    ...banners(),
     navBar,
     hml.p(['prayer request added']),
     hml.p([bible.randomVerse]),
@@ -156,7 +155,7 @@ const beliefList = require('./beliefs.json');
 const beliefs = hml.html([
   headTag,
   hml.body([
-    ...banners,
+    ...banners(),
     navBar,
     hml.a({id: 'top'},[hml.h1(['The following comprise the Scriptural beliefs of First Bible Baptist Church and its members.'])]),
     hml.ul(beliefList.map((nb,num)=>hml.a({href:'#b'+bigLetters[num]},[bigLetters[num],nb[0]]))),
