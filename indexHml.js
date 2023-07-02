@@ -1,3 +1,4 @@
+const fs = require('fs');
 const bible = require('./bible.js');
 const hml = require('./hml.js');
 const modOps = require('./modOps.js');
@@ -22,20 +23,20 @@ const headTag = hml.head([
   hml.script({src: '/client.js'}),
 ]);
 
-const bannerData = require('./bannerData.json');
-const banners = bannerData.filter(
-  bd => new Date(bd.showTo) > new Date()
-).filter(
-  bd => !bd.showFrom || new Date(bd.showFrom) < new Date()
-).map(bd=>hml.div(
-  {class: 'banner', style:`background-color:${bd.backgroundColor};padding:2em`},
-  [bd.text]
-));
+const banners = () => JSON.parse(fs.readFileSync('bannerData.json'))
+  .filter(
+    bd => new Date(bd.showTo) > new Date()
+  ).filter(
+    bd => !bd.showFrom || new Date(bd.showFrom) < new Date()
+  ).map(bd=>hml.div(
+    {class: 'banner', style:`background-color:${bd.backgroundColor};padding:2em`},
+    [bd.text]
+  ));
 
 const index = hml.html([
   headTag,
   hml.body([
-    ...banners,
+    ...banners(),
     hml.img({class: 'church', src: '/church.jpg'}),
     hml.h1(["First Bible Baptist Church Gardner"]),
     hml.h2(["7 Church St, Gardner, MA 01440 * Sun 10:45"]),
@@ -63,7 +64,7 @@ const index = hml.html([
 const calendar = hml.html([
   headTag,
   hml.body([
-    ...banners,
+    ...banners(),
     hml.iframe({
       src: "https://calendar.google.com/calendar/embed?src=firstbiblebaptistgardner%40gmail.com&ctz=America%2FNew_York",
       style: "border: 0",
@@ -77,6 +78,7 @@ const calendar = hml.html([
 ]);
 
 const prayerRequest = hml.html([
+  ...banners(),
   headTag,
   hml.body([
     ...banners,
@@ -113,6 +115,7 @@ const prayerRequest = hml.html([
 ]);
 
 const prayerRequestComplete = hml.html([
+  ...banners(),
   headTag,
   hml.body([
     ...banners,
