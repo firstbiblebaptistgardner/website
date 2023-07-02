@@ -78,10 +78,9 @@ const calendar = hml.html([
 ]);
 
 const prayerRequest = hml.html([
-  ...banners(),
   headTag,
   hml.body([
-    ...banners,
+    ...banners(),
     navBar,
     hml.form({
       action: '/api/prayerRequest',
